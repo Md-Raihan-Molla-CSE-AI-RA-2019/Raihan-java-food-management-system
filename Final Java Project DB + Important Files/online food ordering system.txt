@@ -1,0 +1,215 @@
+create table create_account
+(
+name varchar2(40),
+user_name varchar2(50),
+password varchar2(30)
+)
+
+
+create table customer
+(
+slno number(6),
+name varchar2(50) not null,
+address varchar2(50),
+cellno varchar2(12),
+emailid varchar2(30),
+constraint var_cus_pk primary key(slno),
+constraint var_cus_uq1 unique(cellno),
+constraint var_cus_uq2 unique(emailid)
+);
+
+
+create table food_item
+(
+Food_id varchar2(20),
+Food_name varchar2(50) not null,
+type varchar2(20),
+unit varchar2(30) not null,
+Pic_address varchar2(35),
+constraint var_fooditem_pk primary key(food_id)
+);
+
+
+create table food_item_price
+(
+slno number(6),
+Food_id varchar2(20),
+unit_price number(8,2),
+status number(1) not null,
+constraint var_fooditemprice_pk primary key(slno),
+constraint var_fooditemprice_fk foreign key(Food_id) references food_item(food_id)
+);
+
+
+
+
+create sequence Food_item_price_slno_seq
+minvalue 1
+start with 1
+increment by 1
+cache 10;
+
+
+create table food_item_order
+(
+slno number(6),
+Food_id varchar2(8),
+quantity number(3),
+customerid number(6),
+orderdate date,
+status number(1),
+constraint var_fooditemorder_pk primary key(slno),
+constraint var_fooditemorder_fk foreign key(Food_id) references food_item(food_id),
+constraint var_fooditemorder_chk check(quantity between 1 and 100),
+constraint var_fooditemorder_fk2 foreign key(customerid) references customer(slno)
+);
+
+
+
+
+create sequence Food_item_order_slno_seq
+minvalue 1
+start with 1
+increment by 1
+cache 10;
+
+
+
+create or replace trigger before_insert_food_item_order
+before insert on food_item_order
+for each row
+declare
+v_slno number(8);
+V_orderdate date;
+V_status number(1);
+begin
+select sysdate into v_orderdate from dual;
+v_status:=0;
+select food_item_order_slno_seq.nextval into v_slno from dual;
+:new.slno:=v_slno;
+:new.orderdate:=v_orderdate;
+:new.status:=v_status;
+end;
+/
+
+
+create table sales
+(
+invoiceno number(6),
+foodid varchar2(8),
+customerid number(6),
+orderid number(6),
+totalbill number(8,2),
+vat number(8,2),
+payablemoney number(8,2),
+status number(1),
+salesdate date,
+salesuser varchar2(20),
+constraint var_sales_pk primary key(invoiceno),
+constraint var_sales_fk foreign key(foodid) references food_item(food_id),
+constraint var_sales_fk2 foreign key(customerid) references customer(slno),
+constraint var_sales_fk3 foreign key(orderid) references food_item_order(slno)
+);
+
+
+
+
+create sequence sales_invoiceno_seq
+minvalue 1
+start with 1
+increment by 1
+cache 10;
+
+
+
+create or replace trigger trg_bef_ins_sales
+before insert on sales
+for each row
+declare
+v_invoiceno number(8);
+v_foodid varchar2(10);
+v_customerid number(6);
+v_totalbill number(8,2);
+n_vat number(8);
+v_vat number(6,2);
+v_payablemoney number(8,2);
+v_status number(1);
+v_salesdate date;
+v_salesuser varchar2(20);
+v_unitprice number(6,2);
+v_quantity number(3);
+begin
+select sales_invoiceno_seq.nextval into v_invoiceno from dual;
+select user into v_salesuser from dual;
+select sysdate into v_salesdate from dual;
+select food_id into v_foodid from food_item_order where slno= :new.orderid;
+select customerid into v_customerid from food_item_order where slno= :new.orderid;
+select quantity into v_quantity from food_item_order where slno= :new.orderid;
+select unit_price into v_unitprice from food_item_price where food_id=v_foodid;
+select vat into n_vat from vat_table;
+v_vat:= n_vat /100;
+v_totalbill:=v_unitprice * v_quantity;
+v_vat:=v_totalbill * v_vat;
+v_payablemoney:=v_totalbill + v_vat;
+:new.foodid:=v_foodid;
+:new.customerid:=v_customerid;
+:new.status:=1;
+:new.salesdate:=v_salesdate;
+:new.salesuser:=v_salesuser;
+:new.totalbill:=v_totalbill;
+:new.vat:=v_vat;
+:new.payablemoney:=v_payablemoney;
+:new.invoiceno:=v_invoiceno;
+update food_item_order
+set status=1
+where slno=:new.orderid;
+end;
+/
+
+
+
+
+create table food_item_price_audit
+as
+select * from food_item_price;
+
+
+
+alter table food_item_price_audit
+add update_by varchar2(20);
+
+
+alter table food_item_price_audit
+add update_date date;
+
+
+
+alter table food_item_price_audit
+add constraint var_audit_slno_fk foreign key (slno) references food_item_price(slno);
+
+
+create or replace trigger trg_bef_upd_food_item_price_audit
+before update
+on food_item_price
+for each row
+declare
+v_update_by varchar2(20);
+v_update_date date;
+begin
+select user into v_update_by from dual;
+select sysdate into v_update_date from dual;
+insert into food_item_price_audit
+values
+(
+:new.slno,
+:new.food_id,
+:new.unit_price,
+:new.status,
+v_update_by,
+v_update_date
+);
+end;
+/
+
+
+

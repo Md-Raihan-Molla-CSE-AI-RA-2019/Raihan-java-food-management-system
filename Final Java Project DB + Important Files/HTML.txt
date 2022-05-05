@@ -1,0 +1,48 @@
+<body>
+        <%
+            String nm = request.getParameter("name");
+            String add = request.getParameter("address");
+            String cell = request.getParameter("cellno");
+            String email = request.getParameter("emailid");
+            String fid = request.getParameter("foodid");
+            String quan = request.getParameter("quantity");
+            //String cid = request.getParameter("cusid");
+            int quant = Integer.parseInt(quan);
+            //int cuid = 555;
+            int s =0;
+            try{
+                
+                Class.forName("oracle.jdbc.driver.OracleDriver");
+        Connection con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE","system","raihan158851");  
+        Statement stmt = con.createStatement();
+        
+        String q1 = "select slnoseq.nextval as nextval from dual";
+        ResultSet rs = stmt.executeQuery(q1);
+        while(rs.next())
+        {
+               s = rs.getInt(1);
+        }
+        
+        String sql = "insert into customer" +
+                    "(slno,name,address,cellno,emailid)" +
+                    "values(s,'"+nm+"','"+add+"','"+cell+"','"+email+"')";
+        stmt.executeUpdate(sql);
+        /*Statement stmt1 = con.createStatement();
+        stmt1.executeUpdate("insert into food_item_order (food_id,quantity,customerid) values('"+fid+"',"+quant+",s)");*/
+        out.println("Data is inserted Successfully");
+        
+            }
+            catch(Exception e)
+            {
+                out.println(e);
+            }
+        %>
+    </body>
+
+
+
+
+
+<form action="pageorder.jsp" align="center">
+            <br><br><br><br><input type="submit"  value="  Go To Order   " style="font-size:20pt;color:white;background-color:tomato;border:2px solid #FF4C33;padding:3px"> 
+        </form>

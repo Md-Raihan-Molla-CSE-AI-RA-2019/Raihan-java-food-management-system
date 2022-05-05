@@ -1,0 +1,137 @@
+SQL> alter table food_item
+  2  modify food_name varchar2(30);
+
+Table altered.
+
+SQL> desc food_item;
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ FOOD_ID                                   NOT NULL VARCHAR2(8)
+ FOOD_NAME                                 NOT NULL VARCHAR2(30)
+ TYPE                                               VARCHAR2(20)
+ UNIT                                      NOT NULL VARCHAR2(12)
+ PIC_ADDRESS                                        VARCHAR2(20)
+
+SQL> alter table food_item
+  2  modify food_id varchar2(20);
+
+Table altered.
+
+SQL> insert into food_item
+  2  values('&food_id','&food_name','&type','&unit','&pic_address');
+Enter value for food_id: HCC549
+Enter value for food_name: Hot & Crispy Chicken
+Enter value for type: Chicken
+Enter value for unit: 4 Pcs
+Enter value for pic_address: Crispy_Chicken.jpg
+old   2: values('&food_id','&food_name','&type','&unit','&pic_address')
+new   2: values('HCC549','Hot & Crispy Chicken','Chicken','4 Pcs','Crispy_Chicken.jpg')
+
+1 row created.
+
+SQL> alter table food_item
+  2  modify pic_address varchar2(35);
+
+Table altered.
+
+SQL> alter table food_item
+  2  modify food_name varchar2(40);
+
+Table altered.
+
+SQL> insert into food_item
+  2  values('&food_id','&food_name','&type','&unit','&pic_address');
+Enter value for food_id: SCBC294
+Enter value for food_name: Super Charger Burger With Cheese
+Enter value for type: Burgers
+Enter value for unit: 1 Pcs
+Enter value for pic_address: Charger_Burger.jpg
+old   2: values('&food_id','&food_name','&type','&unit','&pic_address')
+new   2: values('SCBC294','Super Charger Burger With Cheese','Burgers','1 Pcs','Charger_Burger.jpg')
+
+1 row created.
+
+SQL> /
+Enter value for food_id: SGRB249
+Enter value for food_name: Smoky Grilled Rice Bowl
+Enter value for type: Rice Meals
+Enter value for unit: Grill & Rice
+Enter value for pic_address: Grilled_Rice_Bowl.jpg
+old   2: values('&food_id','&food_name','&type','&unit','&pic_address')
+new   2: values('SGRB249','Smoky Grilled Rice Bowl','Rice Meals','Grill & Rice','Grilled_Rice_Bowl.jpg')
+
+1 row created.
+
+SQL> alter table food_item
+  2  modify unit varchar2(30);
+
+Table altered.
+
+SQL> insert into food_item
+  2  values('&food_id','&food_name','&type','&unit','&pic_address');
+Enter value for food_id: PC219
+Enter value for food_name: Popcorn Chicken
+Enter value for type: Snacks
+Enter value for unit: 1 Bucket
+Enter value for pic_address: Popcorn_Chicken.jpg
+old   2: values('&food_id','&food_name','&type','&unit','&pic_address')
+new   2: values('PC219','Popcorn Chicken','Snacks','1 Bucket','Popcorn_Chicken.jpg')
+
+1 row created.
+
+SQL> /
+Enter value for food_id: 7up35
+Enter value for food_name: 7 up
+Enter value for type: Drinks
+Enter value for unit: 500 mL
+Enter value for pic_address: 7_up.jpg
+old   2: values('&food_id','&food_name','&type','&unit','&pic_address')
+new   2: values('7up35','7 up','Drinks','500 mL','7_up.jpg')
+
+1 row created.
+
+SQL> select * from food_item
+  2  ;
+
+FOOD_ID              FOOD_NAME                                                  
+-------------------- ----------------------------------------                   
+TYPE                 UNIT                                                       
+-------------------- ------------------------------                             
+PIC_ADDRESS                                                                     
+-----------------------------------                                             
+HCC549               Hot & Crispy Chicken                                       
+Chicken              4 Pcs                                                      
+Crispy_Chicken.jpg                                                              
+                                                                                
+SCBC294              Super Charger Burger With Cheese                           
+Burgers              1 Pcs                                                      
+Charger_Burger.jpg                                                              
+
+FOOD_ID              FOOD_NAME                                                  
+-------------------- ----------------------------------------                   
+TYPE                 UNIT                                                       
+-------------------- ------------------------------                             
+PIC_ADDRESS                                                                     
+-----------------------------------                                             
+                                                                                
+SGRB249              Smoky Grilled Rice Bowl                                    
+Rice Meals           Grill & Rice                                               
+Grilled_Rice_Bowl.jpg                                                           
+                                                                                
+PC219                Popcorn Chicken                                            
+Snacks               1 Bucket                                                   
+
+FOOD_ID              FOOD_NAME                                                  
+-------------------- ----------------------------------------                   
+TYPE                 UNIT                                                       
+-------------------- ------------------------------                             
+PIC_ADDRESS                                                                     
+-----------------------------------                                             
+Popcorn_Chicken.jpg                                                             
+                                                                                
+7up35                7 up                                                       
+Drinks               500 mL                                                     
+7_up.jpg                                                                        
+                                                                                
+
+SQL> exit
